@@ -6,7 +6,7 @@
 
 ## Coordonnées
 - Océane Serrat
-- Leyla Benkaïs
+- Leyla Benkais
 - Jonas Wolter
 - Sarah Meylan
 - Mathilde Schibler
