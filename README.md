@@ -6,7 +6,7 @@
 
 ## Coordonnées
 - Océane Serrat
-- Leyla Benkaïs
+- Leyla Benkais
 - Jonas Wolter
 - Sarah Meylan
 - Mathilde Schibler
@@ -31,8 +31,3 @@ Ainsi, il s'agit d'établir une relation entre l'altitude à laquelle l'ascenseu
 ### Plan
 
 ## Fiche technique
-
-### Besoins matériels
-
-### Besoins techniques
-
