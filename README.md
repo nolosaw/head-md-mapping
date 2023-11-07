@@ -20,4 +20,19 @@ Ainsi, il s'agit d'établir une relation entre l'altitude à laquelle l'ascenseu
 
 ## Plan de situation et de l'installation
 
+### Images de l'ascenseur
+![extérieur](/images/IMG_0274.jpg)
+![ascenseur](/images/IMG_0275.jpg)
+![ascenseur](/images/IMG_0279.jpg)
+![ascensuer](/images/IMG_0281.jpg)
+
+### Croquis de l'installation
+
+### Plan
+
 ## Fiche technique
+
+### Besoins matériels
+
+### Besoins techniques
+
