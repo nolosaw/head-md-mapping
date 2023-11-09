@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Degree Display</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <style>
+      body {
+        font-family: sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(17, 17, 17);
+        background-color: black;
+        color: rgb(255, 225, 0);
+        color: white;
+        overflow: hidden;
+      }
+      h1 {
+        text-transform: uppercase;
+        font-size: 20px;
+      }
+      #degreeDisplay {
+        font-size: 180px;
+        font-weight: 300;
+        /* font-weight: bold; */
+      }
+      #title {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="title">climate scenario</h1>
+    <div id="degreeDisplay">...</div>
+    <script>
+      const degreeDisplay = document.getElementById("degreeDisplay");
+      let currentDegrees;
+
+      let calibration = false;
+      let calibrationEtage = 0;
+      let touchStartEtage;
+
+      function fetchDegree() {
+        fetch("http://172.20.10.2:9000")
+          .then((response) => response.json())
+          .then((data) => {
+            const prefix = data.degrees > 0 ? "+" : " ";
+            currentDegrees = data.degrees;
+
+            if (!calibration) {
+              degreeDisplay.textContent =
+                prefix + currentDegrees.toFixed(1) + "\u00B0";
+            }
+          })
+          .catch((error) => {
+            console.error("Failed to fetch data: " + error);
+            degreeDisplay.textContent = "-.-";
+          });
+      }
+
+      // Fetch data every xx milliseconds
+      setInterval(fetchDegree, 20);
+
+      // Initial fetch
+      fetchDegree();
+
+      function sendCalibration(displayEtage = true) {
+        if (displayEtage) degreeDisplay.textContent = "E " + calibrationEtage;
+
+        fetch("http://172.20.10.2:9000", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Add any additional headers if needed
+          },
+          body: JSON.stringify({
+            calibration: calibration,
+            etage: calibrationEtage,
+          }),
+        })
+          .then((response) => {
+            // Check if the request was successful (status code 2xx)
+            if (response.ok) {
+              console.log("Request successful!");
+            } else {
+              console.error("Error in request");
+            }
+          })
+          .catch((error) => {
+            // Handle any errors that occurred during the fetch
+            console.error("Post error:", error);
+          });
+      }
+
+      // Variables to track touch positions
+      let touchStartY = 0;
+      let distance = 0;
+
+      document.body.addEventListener("touchstart", (e) => {
+        // Track touches only when there are three fingers
+        if (e.touches.length === 3) {
+          touchStartY =
+            (e.touches[0].pageY + e.touches[1].pageY + e.touches[2].pageY) / 3;
+
+          calibration = true;
+          calibrationEtage = currentDegrees ? Math.round(currentDegrees) : 0;
+          touchStartEtage = calibrationEtage;
+
+          sendCalibration();
+          e.preventDefault();
+        }
+      });
+
+      document.body.addEventListener("touchmove", (e) => {
+        // Track positions of three fingers
+        if (e.touches.length === 3) {
+          const currentY =
+            (e.touches[0].pageY + e.touches[1].pageY + e.touches[2].pageY) / 3;
+          distance = (currentY - touchStartY) / window.innerHeight;
+          document.getElementById("title").innerText = distance.toFixed(4);
+          const offset = Math.round(distance / 0.08);
+
+          calibrationEtage = clamp(touchStartEtage - offset, -1, 4);
+          sendCalibration();
+
+          e.preventDefault();
+        }
+      });
+
+      document.body.addEventListener("touchend", (e) => {
+        // Reset distance
+        distance = 0;
+        calibration = false;
+        sendCalibration(false);
+      });
+
+      function clamp(number, min, max) {
+        return Math.max(min, Math.min(number, max));
+      }
+    </script>
+  </body>
+</html>

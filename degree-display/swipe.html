@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #gestureArea {
+        width: 100%;
+        height: 80vh;
+        background-color: #ccc;
+        text-align: center;
+        font-size: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="gestureArea">Swipe with three fingers here.</div>
+    <p id="distance"></p>
+    <script>
+      // Variables to track touch positions
+      let touchPositions = [];
+
+      // Get the gesture area element
+      const gestureArea = document.getElementById("gestureArea");
+      const distanceDisplay = document.getElementById("distance");
+
+      gestureArea.addEventListener("touchstart", (e) => {
+        // Track touches only when there are three fingers
+        if (e.touches.length === 3) {
+          touchPositions = [];
+          distanceDisplay.textContent = "Touch detected"
+          e.preventDefault();
+        }
+      });
+
+      gestureArea.addEventListener("touchmove", (e) => {
+        // Track positions of three fingers
+        if (e.touches.length === 3) {
+          for (let i = 0; i < 3; i++) {
+            touchPositions[i] = {
+              x: e.touches[i].pageX,
+              y: e.touches[i].pageY,
+            };
+          }
+
+          // Calculate distance between the first and last touch points
+          if (touchPositions.length === 3) {
+            const distance = Math.sqrt(
+              Math.pow(touchPositions[0].x - touchPositions[2].x, 2) +
+                Math.pow(touchPositions[0].y - touchPositions[2].y, 2)
+            );
+
+            distanceDisplay.textContent = `Distance: ${distance.toFixed(
+              2
+            )} pixels`;
+          }
+
+          e.preventDefault();
+        }
+      });
+
+      gestureArea.addEventListener("touchend", (e) => {
+        // Reset touch positions and distance
+        touchPositions = [];
+        distanceDisplay.textContent = "";
+      });
+    </script>
+  </body>
+</html>
