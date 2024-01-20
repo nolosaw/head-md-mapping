@@ -41,6 +41,14 @@
     <h1 id="title">climate scenario</h1>
     <div id="degreeDisplay">...</div>
     <script>
+      // Cosntruct Data fetch URL
+      const url = window.location.href;
+      let parts = url.split(":");
+      let dataPort = "9000";
+      parts[parts.length - 1] = dataPort;
+      let dataURL = parts.join(":");
+      console.log("🚀 ~ dataURL:", dataURL);
+
       const degreeDisplay = document.getElementById("degreeDisplay");
       let currentDegrees;
 
@@ -49,11 +57,13 @@
       let touchStartEtage;
 
       function fetchDegree() {
-        fetch("http://172.20.10.2:9000")
+        fetch(dataURL)
           .then((response) => response.json())
           .then((data) => {
             const prefix = data.degrees > 0 ? "+" : " ";
             currentDegrees = data.degrees;
+            currentDegreesRounded = (currentDegrees / 2).toFixed(1) * 2;
+            // console.log("🚀 ~ .then ~ currentDegreesRounded:", currentDegreesRounded);
 
             if (!calibration) {
               degreeDisplay.textContent =
@@ -75,7 +85,7 @@
       function sendCalibration(displayEtage = true) {
         if (displayEtage) degreeDisplay.textContent = "E " + calibrationEtage;
 
-        fetch("http://172.20.10.2:9000", {
+        fetch(dataURL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
